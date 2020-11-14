@@ -1,5 +1,7 @@
 package com.thoughtworks.codepairing.model;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,8 +19,8 @@ public class ShoppingCart {
     }
 
     public Order checkout() {
+        HashSet<String> set = new HashSet<>();
         double totalPrice = 0;
-
         int loyaltyPointsEarned = 0;
         for (Product product : products) {
             double discount = 0;
@@ -28,13 +30,23 @@ public class ShoppingCart {
             } else if (product.getProductCode().startsWith("DIS_15")) {
                 discount = (product.getPrice() * 0.15);
                 loyaltyPointsEarned += (product.getPrice() / 15);
-            } else {
+            } else if(product.getProductCode().startsWith(("DIS_20"))){
+                discount = (product.getPrice() * 0.2);
+                loyaltyPointsEarned += (product.getPrice() / 20);
+            }else if (product.getProductCode().startsWith("BULK_BUY_2_GET_1")){
+                String productCode = product.getProductCode();
+                if(set.contains(productCode)){
+                    discount = product.getPrice() * 1;
+                    set.remove(productCode);
+                }else{
+                    set.add(productCode);
+                }
+            }else{
                 loyaltyPointsEarned += (product.getPrice() / 5);
             }
-
             totalPrice += product.getPrice() - discount;
         }
-
+        totalPrice = totalPrice > 500 ? totalPrice * 0.95 : totalPrice;
         return new Order(totalPrice, loyaltyPointsEarned);
     }
 

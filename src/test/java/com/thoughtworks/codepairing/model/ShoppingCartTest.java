@@ -73,4 +73,86 @@ public class ShoppingCartTest {
 
         assertEquals(6, order.getLoyaltyPoints());
     }
+
+    @Test
+    public void shouldCalculatePriceFor20PercentDiscount() {
+        List<Product> products = asList(new Product(PRICE, "DIS_20_ABCD", PRODUCT));
+        ShoppingCart cart = new ShoppingCart(customer, products);
+        Order order = cart.checkout();
+
+        assertEquals(80.0, order.getTotalPrice(), 0.0);
+    }
+    @Test
+    public void shouldCalculateLoyaltyPointsFor20PercentDiscount() {
+        List<Product> products = asList(new Product(PRICE, "DIS_20_ABCD", PRODUCT));
+        ShoppingCart cart = new ShoppingCart(customer, products);
+        Order order = cart.checkout();
+
+        assertEquals(5, order.getLoyaltyPoints());
+    }
+
+    @Test
+    public void shouldCalculateBuyTwoGetOneWhenOnlyOne() {
+        List<Product> products = asList(new Product(PRICE, "BULK_BUY_2_GET_1_ABCD", PRODUCT));
+        ShoppingCart cart = new ShoppingCart(customer, products);
+        Order order = cart.checkout();
+
+        assertEquals(100.0, order.getTotalPrice(),0.0);
+    }
+
+    @Test
+    public void shouldCalculateBuyTwoGetOneWhenOnlyTwo() {
+        List<Product> products = asList(new Product(PRICE, "BULK_BUY_2_GET_1_ABCD", PRODUCT),
+                new Product(PRICE, "BULK_BUY_2_GET_1_ABCD", PRODUCT));
+        ShoppingCart cart = new ShoppingCart(customer, products);
+        Order order = cart.checkout();
+
+        assertEquals(100.0, order.getTotalPrice(),0.0);
+    }
+
+    @Test
+    public void shouldCalculateBuyTwoGetOneWhenOnlyThree() {
+        List<Product> products = asList(new Product(PRICE, "BULK_BUY_2_GET_1_ABCD", PRODUCT),
+                new Product(PRICE, "BULK_BUY_2_GET_1_ABCD", PRODUCT),
+                new Product(PRICE, "BULK_BUY_2_GET_1_ABCD", PRODUCT));
+        ShoppingCart cart = new ShoppingCart(customer, products);
+        Order order = cart.checkout();
+
+        assertEquals(200.0, order.getTotalPrice(),0.0);
+    }
+
+
+    @Test
+    public void shouldCalculateBuyTwoGetOneWhenDifferent() {
+        List<Product> products = asList(new Product(PRICE, "BULK_BUY_2_GET_1_ABCD", PRODUCT),
+                new Product(PRICE, "BULK_BUY_2_GET_1_EFG", PRODUCT));
+        ShoppingCart cart = new ShoppingCart(customer, products);
+        Order order = cart.checkout();
+
+        assertEquals(200.0, order.getTotalPrice(),0.0);
+    }
+
+    @Test
+    public void shouldCalculateWhenOver500() {
+        List<Product> products = asList(new Product(600, "BULK_BUY_2_GET_1_ABCD", PRODUCT));
+        ShoppingCart cart = new ShoppingCart(customer, products);
+        Order order = cart.checkout();
+
+        assertEquals(570.0, order.getTotalPrice(),0.0);
+    }
+
+    @Test
+    public void shouldCalculateWhenOver500AndHaveTwo() {
+        List<Product> products = asList(new Product(600, "BULK_BUY_2_GET_1_ABCD", PRODUCT),
+                new Product(600, "BULK_BUY_2_GET_1_EFG", PRODUCT));
+        ShoppingCart cart = new ShoppingCart(customer, products);
+        Order order = cart.checkout();
+
+        assertEquals(1140.0, order.getTotalPrice(),0.0);
+    }
+
+
+
+
+
 }
